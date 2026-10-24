@@ -1,0 +1,39 @@
+# Systemd service for running Textile Shop Manager on a Linux cloud server
+# (Ubuntu/Debian). This keeps the app running in the background, restarts
+# it automatically if it crashes, and starts it on server reboot.
+#
+# SETUP (run these once on your server, as root or with sudo):
+#
+#   1. Copy your app to /opt/textile-shop-manager on the server
+#      (see ../README.md "Cloud deployment" section for the full guide).
+#
+#   2. Copy this file into place and edit the paths/user if needed:
+#        sudo cp deploy/textile-shop-manager.service /etc/systemd/system/
+#
+#   3. Reload systemd and start the service:
+#        sudo systemctl daemon-reload
+#        sudo systemctl enable --now textile-shop-manager
+#
+#   4. Check it's running / view logs:
+#        sudo systemctl status textile-shop-manager
+#        sudo journalctl -u textile-shop-manager -f
+
+[Unit]
+Description=Textile Shop Manager
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/textile-shop-manager
+ExecStart=/usr/bin/node server/server.js
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=4000
+# Set a fixed session secret so logins survive restarts/deploys.
+# Generate one with: openssl rand -hex 32
+Environment=SESSION_SECRET=REPLACE_WITH_A_LONG_RANDOM_STRING
+
+[Install]
+WantedBy=multi-user.target

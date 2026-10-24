@@ -1,0 +1,17 @@
+# Caddy config for Textile Shop Manager — gives you free, automatic HTTPS
+# with a real certificate, no manual certbot/nginx setup needed.
+#
+# SETUP:
+#   1. Replace "yourshop.com" below with your actual domain (must already
+#      point to this server's IP address — see ../README.md).
+#   2. Install Caddy: https://caddyserver.com/docs/install
+#   3. Copy this file to /etc/caddy/Caddyfile
+#   4. sudo systemctl reload caddy
+#
+# That's it — Caddy automatically requests and renews an HTTPS certificate
+# from Let's Encrypt, and forwards all traffic to the app running on
+# port 4000 (started separately via the systemd service).
+
+yourshop.com {
+	reverse_proxy localhost:4000
+}
